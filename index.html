@@ -9,31 +9,39 @@
 <div id="result"></div>
 
 <script>
-const API_KEY = "6ae38e4a441346f3aa40154d5a852739";
 
 async function loadMatches() {
   const output = document.getElementById("result");
 
-  output.innerHTML = "Request starting...";
+  output.innerHTML = "Loading matches...";
 
   try {
-    const res = await fetch("https://api.football-data.org/v4/matches", {
-      headers: {
-        "X-Auth-Token": API_KEY
-      }
+    const res = await fetch("https://www.thesportsdb.com/api/v1/json/123/eventsnextleague.php?id=4328");
+
+    const data = await res.json();
+
+    let html = "<h3>Upcoming Matches</h3>";
+
+    data.events.forEach(match => {
+      html += `
+        <p>
+          <b>${match.strHomeTeam}</b>
+          vs
+          <b>${match.strAwayTeam}</b>
+          <br>
+          Date: ${match.dateEvent}
+        </p>
+        <hr>
+      `;
     });
 
-    output.innerHTML =
-      "Status Code: " + res.status + "<br>Loading response...";
-
-    const text = await res.text();
-
-    output.innerHTML += "<br><pre>" + text + "</pre>";
+    output.innerHTML = html;
 
   } catch (err) {
     output.innerHTML = "ERROR: " + err.message;
   }
 }
+
 </script>
 
 </body>
