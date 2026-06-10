@@ -16,11 +16,16 @@ async function loadMatches() {
   output.innerHTML = "Loading matches...";
 
   try {
-    const res = await fetch("https://www.thesportsdb.com/api/v1/json/123/eventsnextleague.php?id=4328");
+    const res = await fetch("https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328");
 
     const data = await res.json();
 
-    let html = "<h3>Upcoming Matches</h3>";
+    let html = "<h3>Upcoming Premier League Matches</h3>";
+
+    if (!data.events) {
+      output.innerHTML = "No matches found";
+      return;
+    }
 
     data.events.forEach(match => {
       html += `
@@ -30,6 +35,8 @@ async function loadMatches() {
           <b>${match.strAwayTeam}</b>
           <br>
           Date: ${match.dateEvent}
+          <br>
+          Time: ${match.strTime}
         </p>
         <hr>
       `;
