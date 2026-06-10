@@ -1,40 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Football Predictor</title>
-</head>
 <body>
 
-<h1>Today's Matches</h1>
+<h1>Football Predictor</h1>
 
-<button onclick="loadMatches()">Load Matches</button>
+<button onclick="test()">Click Me</button>
 
-<div id="matches"></div>
+<div id="result"></div>
 
 <script>
-const API_KEY = "6ae38e4a441346f3aa40154d5a852739";
-
-async function loadMatches() {
-  try {
-    const response = await fetch(
-      "https://api.football-data.org/v4/matches",
-      {
-        headers: {
-          "X-Auth-Token": API_KEY
-        }
-      }
-    );
-
-    const data = await response.json();
-
-    document.getElementById("matches").innerHTML =
-      "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
-
-  } catch (error) {
-    document.getElementById("matches").innerHTML =
-      "ERROR: " + error.message;
-  }
+function test() {
+  document.getElementById("result").innerHTML =
+    "JavaScript is working!";
 }
 </script>
+
 </body>
 </html>
