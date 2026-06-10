@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Football Predictor</title>
+</head>
+<body>
+
+<h1>Today's Matches</h1>
+
+<button onclick="loadMatches()">Load Matches</button>
+
+<div id="matches"></div>
+
+<script>
+
+const API_KEY = "YOUR_API_KEY";
+
+async function loadMatches() {
+
+  const response = await fetch(
+    "https://api.football-data.org/v4/matches",
+    {
+      headers: {
+        "X-Auth-Token": API_KEY
+      }
+    }
+  );
+
+  const data = await response.json();
+
+  let html = "";
+
+  data.matches.forEach(match => {
+    html += `
+      <p>
+        ${match.homeTeam.name}
+        vs
+        ${match.awayTeam.name}
+      </p>
+    `;
+  });
+
+  document.getElementById("matches").innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>
