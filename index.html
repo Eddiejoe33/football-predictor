@@ -9,33 +9,31 @@
 <div id="result"></div>
 
 <script>
-const API_KEY = "6ae38e4a441346f3aa40154d5a852739";
+const API_KEY = "YOUR_API_KEY";
 
 async function loadMatches() {
   const output = document.getElementById("matches");
 
-  try {
-    output.innerHTML = "Loading...";
+  output.innerHTML = "Request starting...";
 
+  try {
     const res = await fetch("https://api.football-data.org/v4/matches", {
       headers: {
         "X-Auth-Token": API_KEY
       }
     });
 
-    output.innerHTML = "Status: " + res.status;
-
-    const data = await res.json();
-
-    console.log(data);
-
     output.innerHTML =
-      "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+      "Status Code: " + res.status + "<br>Loading response...";
+
+    const text = await res.text();
+
+    output.innerHTML += "<br><pre>" + text + "</pre>";
 
   } catch (err) {
     output.innerHTML = "ERROR: " + err.message;
   }
 }
-</script>
+    </script>
 </body>
 </html>
