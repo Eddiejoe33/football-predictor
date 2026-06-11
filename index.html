@@ -2,7 +2,7 @@
 <html>
 <body>
 
-<h1>Basketball Analytics V7 (REAL API MODEL)</h1>
+<h1>Basketball Predictor (REAL NBA)</h1>
 
 <button onclick="loadGames()">Load NBA Games</button>
 
@@ -15,7 +15,6 @@ async function loadGames() {
   output.innerHTML = "Loading NBA games...";
 
   try {
-    // REAL NBA EVENTS (TheSportsDB)
     const res = await fetch(
       "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4387"
     );
@@ -23,50 +22,18 @@ async function loadGames() {
     const data = await res.json();
 
     if (!data.events) {
-      output.innerHTML = "No NBA games found.";
+      output.innerHTML = "No NBA games found right now.";
       return;
     }
 
-    let html = "<h2>NBA Analytics V7 (Stat Model)</h2>";
+    let html = "<h2>NBA Upcoming Games</h2>";
 
-    // limit to 20 games
     data.events.slice(0, 20).forEach(game => {
-
-      const home = game.strHomeTeam;
-      const away = game.strAwayTeam;
-
-      // ---------------------------
-      // SIMPLE STAT MODEL (V7)
-      // ---------------------------
-
-      // fake but structured "team strength index"
-      const homeStrength = (home.length * 3) + 95;
-      const awayStrength = (away.length * 3) + 92;
-
-      const expectedHome = (homeStrength + 100) / 2;
-      const expectedAway = (awayStrength + 100) / 2;
-
-      const total = expectedHome + expectedAway;
-
-      // dynamic NBA line baseline
-      const line = 225;
-
-      const prediction = total > line ? "OVER" : "UNDER";
-
-      const diff = Math.abs(total - line);
-
-      // confidence formula (simple but stable)
-      const confidence = Math.min(95, Math.max(50, 50 + diff / 2));
-
       html += `
-        <div style="margin-bottom:15px;">
-          <b>${home} vs ${away}</b><br>
-          Expected Score: ${expectedHome.toFixed(1)} - ${expectedAway.toFixed(1)}<br>
-          Total: ${total.toFixed(1)}<br>
-          Prediction: <b>${prediction}</b><br>
-          Confidence: ${confidence.toFixed(1)}%
-        </div>
-        <hr>
+        <p>
+          ${game.strHomeTeam} vs ${game.strAwayTeam}<br>
+          Date: ${game.dateEvent}
+        </p>
       `;
     });
 
