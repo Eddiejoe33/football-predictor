@@ -2,28 +2,43 @@
 <html>
 <body>
 
-<h1>Football Predictor</h1>
+<h1>Basketball Predictor</h1>
 
-<button onclick="loadMatches()">Click Me</button>
+<button onclick="loadGames()">Load Games</button>
 
 <div id="result"></div>
 
 <script>
 
-async function loadMatches() {
+async function loadGames() {
   const output = document.getElementById("result");
 
-  output.innerHTML = "Loading...";
+  output.innerHTML = "Loading games...";
 
   try {
     const res = await fetch(
-      "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal"
+      "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=2026-06-11&s=Basketball"
     );
 
     const data = await res.json();
 
-    output.innerHTML =
-      "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+    if (!data.events) {
+      output.innerHTML = "No games found.";
+      return;
+    }
+
+    let html = "<h2>Today's Basketball Games</h2>";
+
+    data.events.slice(0,20).forEach(game => {
+      html += `
+        <p>
+          ${game.strHomeTeam || "Home"} vs
+          ${game.strAwayTeam || "Away"}
+        </p>
+      `;
+    });
+
+    output.innerHTML = html;
 
   } catch (err) {
     output.innerHTML = "ERROR: " + err.message;
