@@ -13,36 +13,17 @@
 async function loadMatches() {
   const output = document.getElementById("result");
 
-  output.innerHTML = "Loading matches...";
+  output.innerHTML = "Loading...";
 
   try {
-    const res = await fetch("https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328");
+    const res = await fetch(
+      "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal"
+    );
 
     const data = await res.json();
 
-    let html = "<h3>Upcoming Premier League Matches</h3>";
-
-    if (!data.events) {
-      output.innerHTML = "No matches found";
-      return;
-    }
-
-    data.events.forEach(match => {
-      html += `
-        <p>
-          <b>${match.strHomeTeam}</b>
-          vs
-          <b>${match.strAwayTeam}</b>
-          <br>
-          Date: ${match.dateEvent}
-          <br>
-          Time: ${match.strTime}
-        </p>
-        <hr>
-      `;
-    });
-
-    output.innerHTML = html;
+    output.innerHTML =
+      "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
 
   } catch (err) {
     output.innerHTML = "ERROR: " + err.message;
