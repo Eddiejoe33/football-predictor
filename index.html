@@ -13,32 +13,17 @@
 async function loadGames() {
   const output = document.getElementById("result");
 
-  output.innerHTML = "Loading games...";
+  output.innerHTML = "Testing API...";
 
   try {
     const res = await fetch(
-      "https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=2026-06-11&s=Basketball"
+      "https://www.thesportsdb.com/api/v1/json/123/all_leagues.php"
     );
 
     const data = await res.json();
 
-    if (!data.events) {
-      output.innerHTML = "No games found.";
-      return;
-    }
-
-    let html = "<h2>Today's Basketball Games</h2>";
-
-    data.events.slice(0,20).forEach(game => {
-      html += `
-        <p>
-          ${game.strHomeTeam || "Home"} vs
-          ${game.strAwayTeam || "Away"}
-        </p>
-      `;
-    });
-
-    output.innerHTML = html;
+    output.innerHTML =
+      "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
 
   } catch (err) {
     output.innerHTML = "ERROR: " + err.message;
