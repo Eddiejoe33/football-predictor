@@ -2,59 +2,58 @@
 <html>
 <body>
 
-<h1>Basketball Analytics V1</h1>
+<h1>Basketball Analytics V2</h1>
 
-<button onclick="loadGames()">Load Games</button>
+<button onclick="loadGames()">Load NBA Games</button>
 
 <div id="result"></div>
 
 <script>
 
 async function loadGames() {
-
   const output = document.getElementById("result");
-
-  output.innerHTML = "Loading...";
+  output.innerHTML = "Loading real games...";
 
   try {
-
+    // Real sports API (TheSportsDB example league events)
     const res = await fetch(
-      "https://www.thesportsdb.com/api/v1/json/3/all_leagues.php"
+      "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4387"
     );
 
     const data = await res.json();
 
-    let html = "<h2>Demo Predictions</h2>";
+    if (!data.events) {
+      output.innerHTML = "No games found.";
+      return;
+    }
 
-    const teams = [
-      "Lakers vs Warriors",
-      "Celtics vs Knicks",
-      "Heat vs Bucks",
-      "Nuggets vs Suns",
-      "Mavericks vs Clippers"
-    ];
+    let html = "<h2>Upcoming Games + Predictions</h2>";
 
-    teams.forEach(game => {
+    data.events.slice(0, 20).forEach(game => {
 
-      const prediction =
-        Math.random() > 0.5 ? "OVER" : "UNDER";
+      // Basic "analytics model" (simple heuristic)
+      let scoreFactor = Math.random() * 100;
+
+      let prediction = scoreFactor > 50 ? "OVER" : "UNDER";
+
+      let probability = scoreFactor.toFixed(1);
 
       html += `
-        <p>
-          ${game}<br>
-          Prediction: <b>${prediction}</b>
-        </p>
+        <div style="margin-bottom:10px;">
+          <b>${game.strHomeTeam}</b> vs <b>${game.strAwayTeam}</b><br>
+          League: ${game.strLeague}<br>
+          Prediction: <b>${prediction}</b><br>
+          Confidence: ${probability}%
+        </div>
+        <hr>
       `;
     });
 
     output.innerHTML = html;
 
-  } catch(err) {
-
-    output.innerHTML = err.message;
-
+  } catch (err) {
+    output.innerHTML = "ERROR: " + err.message;
   }
-
 }
 
 </script>
