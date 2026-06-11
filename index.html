@@ -4,16 +4,14 @@
 
 <h1>Basketball Predictor</h1>
 
-<button onclick="loadGames()">Load Games</button>
+<button onclick="loadBasketball()">Load Basketball Leagues</button>
 
 <div id="result"></div>
 
 <script>
 
-async function loadGames() {
+async function loadBasketball() {
   const output = document.getElementById("result");
-
-  output.innerHTML = "Testing API...";
 
   try {
     const res = await fetch(
@@ -22,8 +20,17 @@ async function loadGames() {
 
     const data = await res.json();
 
-    output.innerHTML =
-      "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+    let html = "<h2>Basketball Leagues</h2>";
+
+    const leagues = data.leagues.filter(
+      league => league.strSport === "Basketball"
+    );
+
+    leagues.forEach(league => {
+      html += `<p>${league.idLeague} - ${league.strLeague}</p>`;
+    });
+
+    output.innerHTML = html;
 
   } catch (err) {
     output.innerHTML = "ERROR: " + err.message;
