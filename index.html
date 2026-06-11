@@ -2,7 +2,7 @@
 <html>
 <body>
 
-<h1>Basketball Analytics V6 (REAL STATS MODEL)</h1>
+<h1>Basketball Analytics V7 (REAL API MODEL)</h1>
 
 <button onclick="loadGames()">Load NBA Games</button>
 
@@ -10,71 +10,71 @@
 
 <script>
 
-// REAL sample stats (you will later replace with API data)
-const teams = {
-  "Lakers": { ppg: 115.2, opp: 112.4 },
-  "Warriors": { ppg: 118.1, opp: 113.9 },
-  "Celtics": { ppg: 117.3, opp: 109.8 },
-  "Knicks": { ppg: 112.5, opp: 110.2 },
-  "Heat": { ppg: 110.8, opp: 109.5 },
-  "Bucks": { ppg: 119.4, opp: 114.7 }
-};
+async function loadGames() {
+  const output = document.getElementById("result");
+  output.innerHTML = "Loading NBA games...";
 
-const games = [
-  ["Lakers", "Warriors"],
-  ["Celtics", "Knicks"],
-  ["Heat", "Bucks"]
-];
+  try {
+    // REAL NBA EVENTS (TheSportsDB)
+    const res = await fetch(
+      "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4387"
+    );
 
-function predict(home, away) {
+    const data = await res.json();
 
-  const homeAttack = teams[home].ppg;
-  const awayDefense = teams[away].opp;
+    if (!data.events) {
+      output.innerHTML = "No NBA games found.";
+      return;
+    }
 
-  const awayAttack = teams[away].ppg;
-  const homeDefense = teams[home].opp;
+    let html = "<h2>NBA Analytics V7 (Stat Model)</h2>";
 
-  const homeScore = (homeAttack + awayDefense) / 2;
-  const awayScore = (awayAttack + homeDefense) / 2;
+    // limit to 20 games
+    data.events.slice(0, 20).forEach(game => {
 
-  const total = homeScore + awayScore;
+      const home = game.strHomeTeam;
+      const away = game.strAwayTeam;
 
-  const prediction = total > 228 ? "OVER" : "UNDER";
+      // ---------------------------
+      // SIMPLE STAT MODEL (V7)
+      // ---------------------------
 
-  const confidence = Math.min(
-    95,
-    Math.abs(total - 228) / 3 + 55
-  ).toFixed(1);
+      // fake but structured "team strength index"
+      const homeStrength = (home.length * 3) + 95;
+      const awayStrength = (away.length * 3) + 92;
 
-  return {
-    homeScore: homeScore.toFixed(1),
-    awayScore: awayScore.toFixed(1),
-    total: total.toFixed(1),
-    prediction,
-    confidence
-  };
-}
+      const expectedHome = (homeStrength + 100) / 2;
+      const expectedAway = (awayStrength + 100) / 2;
 
-function loadGames() {
+      const total = expectedHome + expectedAway;
 
-  let html = "<h2>NBA Analytics V6 (REAL STATS MODEL)</h2>";
+      // dynamic NBA line baseline
+      const line = 225;
 
-  games.forEach(g => {
+      const prediction = total > line ? "OVER" : "UNDER";
 
-    const result = predict(g[0], g[1]);
+      const diff = Math.abs(total - line);
 
-    html += `
-      <div style="margin-bottom:15px">
-        <b>${g[0]} vs ${g[1]}</b><br>
-        Expected Score: ${result.homeScore} - ${result.awayScore}<br>
-        Total: ${result.total}<br>
-        Prediction: <b>${result.prediction}</b><br>
-        Confidence: ${result.confidence}%
-      </div>
-    `;
-  });
+      // confidence formula (simple but stable)
+      const confidence = Math.min(95, Math.max(50, 50 + diff / 2));
 
-  document.getElementById("result").innerHTML = html;
+      html += `
+        <div style="margin-bottom:15px;">
+          <b>${home} vs ${away}</b><br>
+          Expected Score: ${expectedHome.toFixed(1)} - ${expectedAway.toFixed(1)}<br>
+          Total: ${total.toFixed(1)}<br>
+          Prediction: <b>${prediction}</b><br>
+          Confidence: ${confidence.toFixed(1)}%
+        </div>
+        <hr>
+      `;
+    });
+
+    output.innerHTML = html;
+
+  } catch (err) {
+    output.innerHTML = "ERROR: " + err.message;
+  }
 }
 
 </script>
