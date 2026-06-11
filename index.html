@@ -2,39 +2,59 @@
 <html>
 <body>
 
-<h1>Basketball Predictor</h1>
+<h1>Basketball Analytics V1</h1>
 
-<button onclick="loadBasketball()">Load Basketball Leagues</button>
+<button onclick="loadGames()">Load Games</button>
 
 <div id="result"></div>
 
 <script>
 
-async function loadBasketball() {
+async function loadGames() {
+
   const output = document.getElementById("result");
 
+  output.innerHTML = "Loading...";
+
   try {
+
     const res = await fetch(
-      "https://www.thesportsdb.com/api/v1/json/123/all_leagues.php"
+      "https://www.thesportsdb.com/api/v1/json/3/all_leagues.php"
     );
 
     const data = await res.json();
 
-    let html = "<h2>Basketball Leagues</h2>";
+    let html = "<h2>Demo Predictions</h2>";
 
-    const leagues = data.leagues.filter(
-      league => league.strSport === "Basketball"
-    );
+    const teams = [
+      "Lakers vs Warriors",
+      "Celtics vs Knicks",
+      "Heat vs Bucks",
+      "Nuggets vs Suns",
+      "Mavericks vs Clippers"
+    ];
 
-    leagues.forEach(league => {
-      html += `<p>${league.idLeague} - ${league.strLeague}</p>`;
+    teams.forEach(game => {
+
+      const prediction =
+        Math.random() > 0.5 ? "OVER" : "UNDER";
+
+      html += `
+        <p>
+          ${game}<br>
+          Prediction: <b>${prediction}</b>
+        </p>
+      `;
     });
 
     output.innerHTML = html;
 
-  } catch (err) {
-    output.innerHTML = "ERROR: " + err.message;
+  } catch(err) {
+
+    output.innerHTML = err.message;
+
   }
+
 }
 
 </script>
